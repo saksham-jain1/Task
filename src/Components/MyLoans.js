@@ -1,34 +1,40 @@
-import { Box } from "@mui/material";
 import React from "react";
+import { Box, Container, Typography } from "@mui/material";
 import LoanListItem from "./LoanListItem";
 
 const MyLoans = () => {
   return (
-    <Box sx={{ width: 1 }}>
+    <Container maxWidth="md">
+      <Typography variant="h4" textAlign="center" mt={5}>
+        Apply for Loan
+      </Typography>
       <Box
         sx={{
-          width: 1 / 2,
           bgcolor: "#ECF9FF",
           boxShadow: 3,
-          borderRadius: 2,
-          p: 2,
-          minWidth: 350,
-          mx: "auto",
-          my: 5,
+          borderRadius: 4,
+          p: 4,
           display: "flex",
-          gap: .5,
           flexWrap: "wrap",
-          justifyContent: "space-between"
+          justifyContent: "space-around",
+          gap: 0,
+          my: 5,
         }}
       >
-        <LoanListItem data={{id:1}} />
-        <LoanListItem data={{id:1}} />
-        <LoanListItem data={{id:1}} />
-        <LoanListItem data={{id:1}} />
-        <LoanListItem data={{id:1}} />
-        <LoanListItem data={{id:1}} />
+        {[1, 2, 3, 4, 5, 6].map((id) => (
+          <LoanListItem
+            key={id}
+            data={{
+              id,
+              amount: 1000,
+              date: "12/12/2022",
+              term: 4,
+              status: "Ongoing",
+            }}
+          />
+        ))}
       </Box>
-    </Box>
+    </Container>
   );
 };
 

@@ -1,6 +1,8 @@
+import React, { useState } from "react";
 import {
   Box,
   Button,
+  Container,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -9,38 +11,59 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
 
 const RequestLoan = () => {
   const currentDate = new Date().toISOString().slice(0, 10);
+  const [loanAmount, setLoanAmount] = useState(0);
+  const [loanTerm, setLoanTerm] = useState(0);
+
+  const handleLoanAmountChange = (event) => {
+    const amount = parseInt(event.target.value, 10);
+    setLoanAmount(amount < 0 ? 0 : amount);
+  };
+
+  const handleLoanTermChange = (event) => {
+    const term = parseInt(event.target.value, 10);
+    setLoanTerm(term < 0 ? 0 : term);
+  };
+
+  const handleSubmit = () => {
+    
+  };
+
   return (
-    <Box sx={{ width: 1 }}>
+    <Container maxWidth="md">
       <Box
         sx={{
-          width: 1 / 2,
           bgcolor: "#ECF9FF",
           boxShadow: 3,
-          borderRadius: 2,
-          p: 2,
-          minWidth: 350,
-          mx: "auto",
-          my: 5,
+          borderRadius: 4,
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 3,
+          mt: 5,
         }}
       >
-        <Typography fontSize="24px" align="center">
+        <Typography variant="h4" color="primary">
           Apply for Loan
         </Typography>
-        <FormControl sx={{ p: 5, display: "flex", gap: 1 }}>
-          <FormLabel sx={{ px: 1 }}>Name:</FormLabel>
+        <FormControl sx={{ width: "100%" }}>
+          <FormLabel>Name:</FormLabel>
           <TextField value="Samyak" variant="outlined" size="small" disabled />
-          <FormLabel sx={{ px: 1 }}>Email:</FormLabel>
+        </FormControl>
+        <FormControl sx={{ width: "100%" }}>
+          <FormLabel>Email:</FormLabel>
           <TextField
             value="Samyak@gmail.com"
             variant="outlined"
             size="small"
             disabled
           />
-          <FormLabel sx={{ px: 1 }}>Loan Start Date:</FormLabel>
+        </FormControl>
+        <FormControl sx={{ width: "100%" }}>
+          <FormLabel>Loan Start Date:</FormLabel>
           <TextField
             type="date"
             value={currentDate}
@@ -48,20 +71,39 @@ const RequestLoan = () => {
             size="small"
             disabled
           />
-          <FormLabel sx={{ px: 1 }}>Loan Amount:</FormLabel>
+        </FormControl>
+        <FormControl sx={{ width: "100%" }}>
+          <FormLabel>Loan Amount:</FormLabel>
           <OutlinedInput
             type="number"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             variant="outlined"
             size="small"
+            value={loanAmount}
+            onChange={handleLoanAmountChange}
           />
-          <FormLabel sx={{ px: 1 }}>Loan Term:</FormLabel>
-          <TextField type="number" variant="outlined" size="small" />
-          <FormHelperText>**No of wee to repay the loan</FormHelperText>
-          <Button type="submit" variant="contained">Submit</Button>
         </FormControl>
+        <FormControl sx={{ width: "100%" }}>
+          <FormLabel>Loan Term:</FormLabel>
+          <TextField
+            type="number"
+            variant="outlined"
+            size="small"
+            value={loanTerm}
+            onChange={handleLoanTermChange}
+          />
+          <FormHelperText>**No of weeks to repay the loan</FormHelperText>
+        </FormControl>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
       </Box>
-    </Box>
+    </Container>
   );
 };
 
