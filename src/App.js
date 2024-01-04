@@ -8,8 +8,10 @@ import LoanDetail from "./Components/LoanDetail";
 import LoanRequest from "./Components/LoanRequest";
 import Login from "./Components/Login";
 import PageNotFound from "./Components/PageNotFound";
+import { UserState } from "./Contexts/UserProvider";
 
 function App() {
+  const { user } = UserState();
   return (
     <>
       <div style={{ height: "max-content", minHeight: "92vh" }}>
@@ -17,11 +19,11 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/requestLoan" element={<RequestLoan />} />
-            <Route path="/loanRequests" element={<LoanRequest />} />
+            {user.type === "user" &&<Route path="/requestLoan" element={<RequestLoan />} />}
+            {user.type === "user" &&<Route path="/myLoans" element={<MyLoans />} />}
+            {user.type === "admin" &&<Route path="/loanRequests" element={<LoanRequest />} />}
+            {user.name && <Route path="/loan/:id" element={<LoanDetail />} />}
             <Route path="/login" element={<Login />} />
-            <Route path="/myLoans" element={<MyLoans />} />
-            <Route path="/loan/:id" element={<LoanDetail />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Router>

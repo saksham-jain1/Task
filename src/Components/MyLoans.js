@@ -1,8 +1,10 @@
 import React from "react";
 import { Box, Container, Typography } from "@mui/material";
 import LoanListItem from "./LoanListItem";
+import { UserState } from "../Contexts/UserProvider";
 
 const MyLoans = () => {
+  const { user } = UserState();
   return (
     <Container maxWidth="md">
       <Typography variant="h4" textAlign="center" mt={5}>
@@ -21,18 +23,13 @@ const MyLoans = () => {
           my: 5,
         }}
       >
-        {[1, 2, 3, 4, 5, 6].map((id) => (
-          <LoanListItem
-            key={id}
-            data={{
-              id,
-              amount: 1000,
-              date: "12/12/2022",
-              term: 4,
-              status: "Ongoing",
-            }}
-          />
-        ))}
+        {user?.loans
+          ?.sort(
+            (a, b) => new Date(b.loanStartDate) - new Date(a.loanStartDate)
+          )
+          .map((item, id) => (
+            <LoanListItem key={id} data={item} />
+          ))}
       </Box>
     </Container>
   );

@@ -11,11 +11,16 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { UserState } from "../Contexts/UserProvider";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RequestLoan = () => {
   const currentDate = new Date().toISOString().slice(0, 10);
   const [loanAmount, setLoanAmount] = useState(0);
   const [loanTerm, setLoanTerm] = useState(0);
+  const { user, setUser } = UserState();
+  const navigate = useNavigate();
 
   const handleLoanAmountChange = (event) => {
     const amount = parseInt(event.target.value, 10);
@@ -27,8 +32,24 @@ const RequestLoan = () => {
     setLoanTerm(term < 0 ? 0 : term);
   };
 
-  const handleSubmit = () => {
-    
+  const handleSubmit = async () => {
+    try {
+      if (loanAmount === 0 || loanTerm === 0) {
+        alert("Loan Amount and Term can't be 0");
+        return;
+      }
+      const { data } = await axios.post("/api/loan", {
+        userId: user._id,
+        loanAmount,
+        loanTerm,
+        loanStartDate: Date.now(),
+      });
+      setUser({ ...user, loans: [data, ...user.loans] });
+      alert("Loan Requested Successfully");
+      navigate("/myLoans");
+    } catch (error) {
+      alert("some error occured\n" + error?.message);
+    }
   };
 
   return (
@@ -43,7 +64,7 @@ const RequestLoan = () => {
           flexDirection: "column",
           alignItems: "center",
           gap: 3,
-          mt: 5,
+          my: 5,
         }}
       >
         <Typography variant="h4" color="primary">
@@ -51,12 +72,17 @@ const RequestLoan = () => {
         </Typography>
         <FormControl sx={{ width: "100%" }}>
           <FormLabel>Name:</FormLabel>
-          <TextField value="Samyak" variant="outlined" size="small" disabled />
+          <TextField
+            value={user.name}
+            variant="outlined"
+            size="small"
+            disabled
+          />
         </FormControl>
         <FormControl sx={{ width: "100%" }}>
           <FormLabel>Email:</FormLabel>
           <TextField
-            value="Samyak@gmail.com"
+            value={user.email}
             variant="outlined"
             size="small"
             disabled

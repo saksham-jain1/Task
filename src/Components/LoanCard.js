@@ -7,22 +7,35 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const LoanCard = ({ data, showActions }) => {
+const LoanCard = ({ data, fetchData }) => {
+  const { name, amount, loanStartDate, term, status } = data;
+  const navigate = useNavigate();
 
-  const { name, amount, date, term, status } = data;
-
-  const handleAcceptRequest = () => {
-    // Implement your logic for accepting the loan request
-  };
-
-  const handleRejectRequest = () => {
-    // Implement your logic for rejecting the loan request
+  const handleSubmit = async (event, status) => {
+    event.stopPropagation();
+    await axios.patch("/api/loan", {
+      loanId: data._id,
+      type: "admin",
+      status,
+    });
+    fetchData();
   };
 
   return (
-    <Grid item xs={12} sm={6} md={4} >
-      <Card sx={{ boxShadow: 3, borderRadius: 4, transition: "transform 0.2s" }}>
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      md={4}
+      onClick={() => navigate(`/loan/${data._id}`)}
+      sx={{ cursor: "pointer" }}
+    >
+      <Card
+        sx={{ boxShadow: 3, borderRadius: 4, transition: "transform 0.2s" }}
+      >
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {name}
@@ -31,7 +44,7 @@ const LoanCard = ({ data, showActions }) => {
             Amount: ${amount}
           </Typography>
           <Typography variant="body2" color="textSecondary" mb={2}>
-            Date: {date}
+            Date: {new Date(loanStartDate).toDateString()}
           </Typography>
           <Typography variant="body2" color="textSecondary" mb={2}>
             Term: {term} weeks
@@ -40,19 +53,19 @@ const LoanCard = ({ data, showActions }) => {
             Status: {status}
           </Typography>
         </CardContent>
-        {status === "Pending" && (
+        {status === "pending" && (
           <CardActions sx={{ justifyContent: "center" }}>
             <Button
               variant="contained"
               color="success"
-              onClick={handleAcceptRequest}
+              onClick={(event) => handleSubmit(event, "approved")}
             >
               Accept
             </Button>
             <Button
               variant="contained"
               color="error"
-              onClick={handleRejectRequest}
+              onClick={(event) => handleSubmit(event, "declined")}
               sx={{ ml: 1 }}
             >
               Reject

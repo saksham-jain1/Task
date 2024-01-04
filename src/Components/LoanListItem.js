@@ -1,6 +1,6 @@
 import { styled } from "@mui/material/styles";
-import { Grid, Paper, Typography } from '@mui/material'
-import React from 'react'
+import { Grid, Paper, Typography } from "@mui/material";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const CustomPaper = styled(Paper)(({ theme }) => ({
@@ -15,15 +15,14 @@ const CustomPaper = styled(Paper)(({ theme }) => ({
 
 const LoanListItem = ({ data }) => {
   const navigate = useNavigate();
-
   return (
     <Grid
       container
-      onClick={() => navigate(`/loan/${data.id}`)}
+      onClick={() => navigate(`/loan/${data._id}`)}
       sx={{
         borderRadius: 1,
         my: 2,
-        boxShadow:3
+        boxShadow: 3,
       }}
     >
       <Grid item xs={3}>
@@ -32,7 +31,7 @@ const LoanListItem = ({ data }) => {
       </Grid>
       <Grid item xs={3}>
         <CustomPaper>Date</CustomPaper>
-        <CustomPaper>{data.date}</CustomPaper>
+        <CustomPaper>{new Date(data.loanStartDate).toLocaleDateString()}</CustomPaper>
       </Grid>
       <Grid item xs={3}>
         <CustomPaper>Term</CustomPaper>
@@ -44,6 +43,6 @@ const LoanListItem = ({ data }) => {
       </Grid>
     </Grid>
   );
-}
+};
 
 export default LoanListItem;

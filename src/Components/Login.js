@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Container,
   Typography,
@@ -7,19 +7,32 @@ import {
   Grid,
   Paper,
   CssBaseline,
-} from '@mui/material';
+} from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { UserState } from "../Contexts/UserProvider";
 
-const LoginPage = ({ onToggle }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginPage = ({ onToggle, navigate }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { setUser } = UserState();
 
-  const handleLogin = () => {
-    // Add your login logic here
-    console.log('Login:', email, password);
+  const handleLogin = async () => {
+    try {
+      const { data } = await axios.post("/api/user/login", { email, password });
+      setUser(data);
+      alert("successfully login");
+      navigate("/");
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
-    <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#ECF9FF' }}>
+    <Paper
+      elevation={3}
+      style={{ padding: "20px", marginTop: "50px", backgroundColor: "#ECF9FF" }}
+    >
       <Typography variant="h5" color="primary" mb={3}>
         Login
       </Typography>
@@ -52,8 +65,11 @@ const LoginPage = ({ onToggle }) => {
         </Button>
       </form>
       <Typography variant="body2" mt={2} color="textSecondary">
-        Don't have an account?{' '}
-        <span style={{ cursor: 'pointer', color: '#1E88E5' }} onClick={onToggle}>
+        Don't have an account?{" "}
+        <span
+          style={{ cursor: "pointer", color: "#1E88E5" }}
+          onClick={onToggle}
+        >
           Sign Up
         </span>
       </Typography>
@@ -61,19 +77,35 @@ const LoginPage = ({ onToggle }) => {
   );
 };
 
-const SignupPage = ({ onToggle }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+const SignupPage = ({ onToggle,navigate }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const { setUser } = UserState();
 
-  const handleSignup = () => {
-    // Add your signup logic here
-    console.log('SignUp:', name, email, password, confirmPassword);
+  const handleSignup = async() => {
+    try {
+      if(password!==confirmPassword)
+      {
+        alert("password and confirm password didn't match");
+        return;
+      }
+
+      const { data } = await axios.post("/api/user/", { name, email, password });
+      setUser(data);
+      alert("successfully account created");
+      navigate("/");
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
-    <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#FFFBEB' }}>
+    <Paper
+      elevation={3}
+      style={{ padding: "20px", marginTop: "50px", backgroundColor: "#FFFBEB" }}
+    >
       <Typography variant="h5" color="primary" mb={3}>
         Sign Up
       </Typography>
@@ -123,8 +155,11 @@ const SignupPage = ({ onToggle }) => {
         </Button>
       </form>
       <Typography variant="body2" mt={2} color="textSecondary">
-        Already have an account?{' '}
-        <span style={{ cursor: 'pointer', color: '#1E88E5' }} onClick={onToggle}>
+        Already have an account?{" "}
+        <span
+          style={{ cursor: "pointer", color: "#1E88E5" }}
+          onClick={onToggle}
+        >
           Login
         </span>
       </Typography>
@@ -134,6 +169,7 @@ const SignupPage = ({ onToggle }) => {
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
 
   const handleToggle = () => {
     setIsLogin(!isLogin);
@@ -144,9 +180,9 @@ const AuthPage = () => {
       <CssBaseline />
       <Grid container justifyContent="center">
         {isLogin ? (
-          <LoginPage onToggle={handleToggle} />
+          <LoginPage onToggle={handleToggle} navigate={navigate} />
         ) : (
-          <SignupPage onToggle={handleToggle} />
+          <SignupPage onToggle={handleToggle} navigate={navigate} />
         )}
       </Grid>
     </Container>

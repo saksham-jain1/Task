@@ -13,11 +13,13 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router-dom";
+import { UserState } from "../Contexts/UserProvider";
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState();
   const [anchorElUser, setAnchorElUser] = React.useState();
   const navigate = useNavigate();
+  const { user, setUser } = UserState();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -25,7 +27,11 @@ function Header() {
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
+  const logout = () => {
+    setUser({});
+    navigate("/");
+    handleCloseUserMenu();
+  };
   const handleCloseNavMenu = (page) => {
     if (typeof page === "string") {
       navigate(`/${page}`);
@@ -95,15 +101,22 @@ function Header() {
               <MenuItem onClick={() => handleCloseNavMenu("")}>
                 <Typography textAlign="center">Home</Typography>
               </MenuItem>
-              <MenuItem onClick={() => handleCloseNavMenu("requestLoan")}>
-                <Typography textAlign="center">Request Loan</Typography>
-              </MenuItem>
-              <MenuItem onClick={() => handleCloseNavMenu("loanRequests")}>
-                <Typography textAlign="center">Loan Requests</Typography>
-              </MenuItem>
-              <MenuItem onClick={() => handleCloseNavMenu("myLoans")}>
-                <Typography textAlign="center">My Loans</Typography>
-              </MenuItem>
+              {user.type === "user" ? (
+                <>
+                  <MenuItem onClick={() => handleCloseNavMenu("requestLoan")}>
+                    <Typography textAlign="center">Request Loan</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={() => handleCloseNavMenu("myLoans")}>
+                    <Typography textAlign="center">My Loans</Typography>
+                  </MenuItem>
+                </>
+              ) : (
+                user.type === "admin" && (
+                  <MenuItem onClick={() => handleCloseNavMenu("loanRequests")}>
+                    <Typography textAlign="center">Loan Requests</Typography>
+                  </MenuItem>
+                )
+              )}
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
@@ -132,30 +145,37 @@ function Header() {
             >
               Home
             </Button>
-            <Button
-              onClick={() => handleCloseNavMenu("requestLoan")}
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              Request Loan
-            </Button>
-            <Button
-              onClick={() => handleCloseNavMenu("loanRequests")}
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              Loan Requests
-            </Button>
-            <Button
-              onClick={() => handleCloseNavMenu("myLoans")}
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              My Loans
-            </Button>
+            {user.type === "user" ? (
+              <>
+                <Button
+                  onClick={() => handleCloseNavMenu("requestLoan")}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  Request Loan
+                </Button>
+                <Button
+                  onClick={() => handleCloseNavMenu("myLoans")}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  My Loans
+                </Button>
+              </>
+            ) : (
+              user.type === "admin" && (
+                <Button
+                  onClick={() => handleCloseNavMenu("loanRequests")}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  Loan Requests
+                </Button>
+              )
+            )}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={user.name} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu
@@ -177,12 +197,16 @@ function Header() {
               <MenuItem onClick={handleCloseUserMenu}>
                 <Typography textAlign="center">Profile</Typography>
               </MenuItem>
-              <MenuItem onClick={() => handleCloseUserMenu("/login")}>
-                <Typography textAlign="center">Login/SignUp</Typography>
-              </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center">Logout</Typography>
-              </MenuItem>
+              {!user.name && (
+                <MenuItem onClick={() => handleCloseUserMenu("/login")}>
+                  <Typography textAlign="center">Login/SignUp</Typography>
+                </MenuItem>
+              )}
+              {user.name && (
+                <MenuItem onClick={logout}>
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
+              )}
             </Menu>
           </Box>
         </Toolbar>
